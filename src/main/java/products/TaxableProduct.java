@@ -1,10 +1,21 @@
 package products;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 
 import taxes.SalesTax;
+import utils.CurrencyUtilities;
 
+/**
+ * The TaxableProduct class represents a generic product, which can
+ * have two different tax types applied: a basic sales tax and an import
+ * duty tax. A product can be exempt from basic sales tax, and is exempt
+ * from import duties if it is not imported.
+ * <p>
+ * It also provides a toString method to print a product's description,
+ * net price, basic sales tax and duty tax values.
+ * @author Francesco Venturini - 24.03.2018
+ *
+ */
 public class TaxableProduct extends GenericProduct {
 	
 	// constants
@@ -12,12 +23,11 @@ public class TaxableProduct extends GenericProduct {
 	private static final BigDecimal DEFAULT_IMPORT_DUTY_RATE = new BigDecimal(5);
 	
 	
+	// private members
 	private boolean basicSalesTaxExempt = false;
-//	private BigDecimal basicSalesTaxRate = DEFAULT_SALES_TAX_RATE;
 	private SalesTax basicTax;
 	
 	private boolean imported = false;	
-//	private BigDecimal importDutiesRate = DEFAULT_IMPORT_DUTY_RATE;
 	private SalesTax importTax;
 
 
@@ -40,11 +50,11 @@ public class TaxableProduct extends GenericProduct {
 	
 	// abstract superclass implementations
 	public BigDecimal calcSalesTax() {
-		return getBasicTax().calculateTaxValue(this);
+		return basicTax.calculateTaxValue(this);
 	}
 	
 	public BigDecimal calcImportDuties() {
-		return getImportTax().calculateTaxValue(this);
+		return importTax.calculateTaxValue(this);
 	}
 
 	public BigDecimal calcShelfPrice() {
@@ -57,24 +67,13 @@ public class TaxableProduct extends GenericProduct {
 		StringBuilder sb = new StringBuilder();
 		sb.append(isImported() ? "imported " : "");
 		sb.append(getDescription() + "\n");
-		sb.append("Price before taxes and duties: " + formatCurrency(getNetPrice()) + "\n");
-		sb.append("Sales taxes: " + formatCurrency(calcSalesTax()) + "\n");
-		sb.append(isImported() ? ("Import duties: " + formatCurrency(calcImportDuties()) + "\n") : "");
-		sb.append("Final price: " + formatCurrency(calcShelfPrice()) + "\n");
+		sb.append("Price before taxes and duties: " + CurrencyUtilities.formatCurrency(getNetPrice()) + "\n");
+		sb.append("Sales taxes: " + CurrencyUtilities.formatCurrency(calcSalesTax()) + "\n");
+		sb.append(isImported() ? ("Import duties: " + CurrencyUtilities.formatCurrency(calcImportDuties()) + "\n") : "");
+		sb.append("Final price: " + CurrencyUtilities.formatCurrency(calcShelfPrice()) + "\n");
 		return sb.toString();
 	}
 	
-	/**
-	 * utility method to format BigDecimal as a currency
-	 * based on the default locale
-	 * @param bd
-	 * @return
-	 */
-	private String formatCurrency(BigDecimal bd) {
-		return NumberFormat.getCurrencyInstance().format(bd);
-	}
-
-
 	
 	// getters and setters begin here
 	public boolean isBasicSalesTaxExempt() {
