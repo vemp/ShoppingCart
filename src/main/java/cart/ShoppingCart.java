@@ -3,7 +3,9 @@ package cart;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import taxes.SalesTax;
 import utils.CurrencyUtilities;
 
 /**
@@ -22,8 +24,12 @@ public class ShoppingCart {
 	public BigDecimal calculateTotalTaxes() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (CartItem c: items) {
-			total = total.add(c.getProduct().calcSalesTax().multiply(new BigDecimal(c.getQuantity())));
-			total = total.add(c.getProduct().calcImportDuties().multiply(new BigDecimal(c.getQuantity())));
+			Map<String, SalesTax> taxes = c.getProduct().getTaxes();
+			for (SalesTax t: taxes.values()) {
+				total  = total.add(t.calculateTaxValue(c.getProduct()));
+			}
+//			total = total.add(c.getProduct().calcSalesTax().multiply(new BigDecimal(c.getQuantity())));
+//			total = total.add(c.getProduct().calcImportDuties().multiply(new BigDecimal(c.getQuantity())));
 		}
 		return total;
 	}
