@@ -12,7 +12,8 @@ public class CurrencyUtilities {
 	 * @return
 	 */
 	public static BigDecimal roundUpToFiveCents(BigDecimal bd) {
-		return bd.signum() == 0 ? bd : (bd.divide(new BigDecimal(0.05), 0, RoundingMode.UP)).multiply(new BigDecimal(0.05));
+		bd = bd.signum() == 0 ? bd : (bd.divide(new BigDecimal(0.05), 0, RoundingMode.UP)).multiply(new BigDecimal(0.05));
+		return bd.setScale(2, RoundingMode.HALF_UP);
 	}
 	
 	/**

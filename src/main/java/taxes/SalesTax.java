@@ -7,7 +7,7 @@ import utils.CurrencyUtilities;
 
 public class SalesTax {
 	
-	private BigDecimal rate;
+	private BigDecimal rate = new BigDecimal(0);
 	
 	public SalesTax() {}
 	
