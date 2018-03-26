@@ -2,7 +2,7 @@ package taxes;
 
 import java.math.BigDecimal;
 
-import products.GenericProduct;
+import products.TaxableProduct;
 import utils.CurrencyUtilities;
 
 /**
@@ -37,12 +37,12 @@ public class SalesTax {
 	}
 	
 	/**
-	 * Calculate the tax value for a given GenericProduct.<br>
+	 * Calculate the tax value for a given TaxableProduct.<br>
 	 * Rounding rule: (net * rate/100 rounded up to the nearest 0.05)
 	 * @param p
-	 * @return
+	 * @return the rounded BigDecimal value
 	 */
-	public BigDecimal calculateTaxValue(GenericProduct p) {
+	public BigDecimal calculateTaxValue(TaxableProduct p) {
 		if (exemption) {
 			return BigDecimal.ZERO;
 		}
