@@ -1,6 +1,8 @@
 package products;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import taxes.SalesTax;
 import utils.CurrencyUtilities;
@@ -19,18 +21,19 @@ import utils.CurrencyUtilities;
 public class TaxableProduct extends GenericProduct {
 	
 	// constants
+	private static final String BASIC_SALES_TAX_KEY = "SALES";
+	private static final String IMPORT_DUTIES_TAX_KEY = "IMPORT";
 	private static final BigDecimal DEFAULT_SALES_TAX_RATE = new BigDecimal(10);
 	private static final BigDecimal DEFAULT_IMPORT_DUTY_RATE = new BigDecimal(5);
+	private static final String BASIC_SALES_TAX_DESCRIPTION = "Basic sales tax";
+	private static final String IMPORT_DUTY_TAX_DESCRIPTION = "Import duties tax";
 	
 	
 	// private members
 	private boolean basicSalesTaxExempt = false;
-	private SalesTax basicTax;
+	private Map<String, SalesTax> taxes = new HashMap<String, SalesTax>();
 	
-	private boolean imported = false;	
-	private SalesTax importTax;
-
-
+	
 	public TaxableProduct() {
 		initializeTaxes();
 	}
@@ -39,30 +42,67 @@ public class TaxableProduct extends GenericProduct {
 		this.setNetPrice(netPrice);
 		this.setDescription(description);
 		this.basicSalesTaxExempt = basicSalesTaxExempt;
-		this.imported = imported;
+		this.setImported(imported);
 		initializeTaxes();
 	}
-	
-	private void initializeTaxes() {
-		this.setBasicTax(new SalesTax(basicSalesTaxExempt ? BigDecimal.ZERO : DEFAULT_SALES_TAX_RATE));
-		this.setImportTax(new SalesTax(!imported ? BigDecimal.ZERO : DEFAULT_IMPORT_DUTY_RATE));
-	}
-	
-	// abstract superclass implementations
+
 	public BigDecimal calcSalesTax() {
-		return basicTax.calculateTaxValue(this);
+		return taxes.get(BASIC_SALES_TAX_KEY).calculateTaxValue(this);
 	}
 	
 	public BigDecimal calcImportDuties() {
-		return importTax.calculateTaxValue(this);
+		return taxes.get(IMPORT_DUTIES_TAX_KEY).calculateTaxValue(this);
 	}
 
+	
+
+	// abstract superclass implementations
 	public BigDecimal calcShelfPrice() {
 		return getNetPrice().add(calcSalesTax()).add(calcImportDuties());
 	}
 	
+
 	
-	// toString method for all derived subclasses
+	// private methods
+	private void initializeTaxes() {
+		taxes.clear();
+		taxes.put(BASIC_SALES_TAX_KEY, new SalesTax(DEFAULT_SALES_TAX_RATE, BASIC_SALES_TAX_DESCRIPTION, basicSalesTaxExempt));
+		taxes.put(IMPORT_DUTIES_TAX_KEY, new SalesTax(DEFAULT_IMPORT_DUTY_RATE, IMPORT_DUTY_TAX_DESCRIPTION, !isImported()));
+	}
+
+	
+	// getters and setters begin here
+	public boolean isBasicSalesTaxExempt() {
+		return basicSalesTaxExempt;
+	}
+
+	public void setBasicSalesTaxExempt(boolean basicSalesTaxExempt) {
+		this.basicSalesTaxExempt = basicSalesTaxExempt;
+		this.taxes.get(BASIC_SALES_TAX_KEY).setExemption(basicSalesTaxExempt);
+	}
+	
+	public Map<String, SalesTax> getTaxes() {
+		return taxes;
+	}
+
+	public void setTaxes(Map<String, SalesTax> taxes) {
+		if (taxes == null) {
+			this.taxes = new HashMap<String, SalesTax>();
+		} else {
+			this.taxes = taxes;
+		}
+	}
+
+	// override setImported method in order to update the related SalesTax object
+	@Override
+	public void setImported(boolean imported) {
+		super.setImported(imported);
+		this.taxes.get(IMPORT_DUTIES_TAX_KEY).setExemption(!imported);
+	}
+
+	
+	
+	// toString method override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(isImported() ? "imported " : "");
@@ -74,40 +114,4 @@ public class TaxableProduct extends GenericProduct {
 		return sb.toString();
 	}
 	
-	
-	// getters and setters begin here
-	public boolean isBasicSalesTaxExempt() {
-		return basicSalesTaxExempt;
-	}
-
-	public void setBasicSalesTaxExempt(boolean basicSalesTaxExempt) {
-		this.basicSalesTaxExempt = basicSalesTaxExempt;
-		initializeTaxes();
-	}
-
-	public SalesTax getBasicTax() {
-		return basicTax;
-	}
-
-	public void setBasicTax(SalesTax basicTax) {
-		this.basicTax = basicTax;
-	}
-
-	public boolean isImported() {
-		return imported;
-	}
-
-	public void setImported(boolean imported) {
-		this.imported = imported;
-		initializeTaxes();
-	}
-
-	public SalesTax getImportTax() {
-		return importTax;
-	}
-
-	public void setImportTax(SalesTax importTax) {
-		this.importTax = importTax;
-	}
-
 }
