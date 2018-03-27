@@ -3,17 +3,20 @@ package cart;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import taxes.SalesTax;
 import utils.CurrencyUtilities;
 
 /**
  * The ShoppingCart class represents a shopping cart, which can contain
- * different GenericProducts. Each product added contributes to the total
- * tax value of the cart, and to the total shelf price of the cart.
+ * different products. Each product is added as a {@link CartItem } object
+ * with its quantity, and contributes to the total tax value of the cart
+ * and to the total shelf price of the cart.
  * <p>
- * The class provides a toString() method to print out the cart.
+ * The class provides a calcTotalTaxes method which returns the total tax
+ * value and a calcShelfPrice method which returns the total shelf price
+ * value for all items in the cart.
+ * <p>
+ * It also provides a toString() method to print out the cart.
  * @author Francesco Venturini - 24.03.2018
  *
  */
@@ -21,39 +24,33 @@ public class ShoppingCart {
 
 	private List<CartItem> items = new ArrayList<CartItem>();
 
-	public BigDecimal calculateTotalTaxes() {
+	/**
+	 * Calculate total taxes for all the {@link CartItem}s in the shopping cart.
+	 * @return a BigDecimal representing the total tax value for the cart.
+	 */
+	public BigDecimal calcTotalTaxes() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (CartItem c: items) {
-			Map<String, SalesTax> taxes = c.getProduct().getTaxes();
-			for (SalesTax t: taxes.values()) {
-				total  = total.add(t.calculateTaxValue(c.getProduct()));
-			}
-//			total = total.add(c.getProduct().calcSalesTax().multiply(new BigDecimal(c.getQuantity())));
-//			total = total.add(c.getProduct().calcImportDuties().multiply(new BigDecimal(c.getQuantity())));
+			total.add(c.calcTaxes());
 		}
 		return total;
 	}
 	
-	public BigDecimal calculateTotalShelfPrice() {
-		BigDecimal total = calculateTotalTaxes();
+	/**
+	 * Calculate total shelf price for all the {@link CartItem}s in the shopping cart.
+	 * @return a BigDecimal representing the total shelf price value for the cart.
+	 */
+	public BigDecimal calcTotalShelfPrice() {
+		BigDecimal total = calcTotalTaxes();
 		for (CartItem c: items) {
-			total = total.add(c.getProduct().getNetPrice().multiply(new BigDecimal(c.getQuantity())));
+			total = total.add(c.calcShelfPrice());
 		}
 		return total;
 	}
 	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (CartItem c: items) {
-			sb.append(c.toString() + "\n");
-		}
-		sb.append("Sales taxes: " + CurrencyUtilities.formatCurrency(calculateTotalTaxes()) + "\n");
-		sb.append("Total: " + CurrencyUtilities.formatCurrency(calculateTotalShelfPrice()) + "\n");
-		return sb.toString();
-	}
-
-
-
+	
+	
+	// getters and setters
 	public List<CartItem> getItems() {
 		return items;
 	}
@@ -61,5 +58,18 @@ public class ShoppingCart {
 	public void setItems(List<CartItem> items) {
 		this.items = items;
 	}
+
 	
+	
+	// toString method override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (CartItem c: items) {
+			sb.append(c.toString() + "\n");
+		}
+		sb.append("Sales taxes: " + CurrencyUtilities.formatCurrency(calcTotalTaxes()) + "\n");
+		sb.append("Total: " + CurrencyUtilities.formatCurrency(calcTotalShelfPrice()) + "\n");
+		return sb.toString();
+	}
+
 }

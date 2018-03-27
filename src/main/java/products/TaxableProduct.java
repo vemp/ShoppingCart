@@ -46,19 +46,40 @@ public class TaxableProduct extends GenericProduct {
 		initializeTaxes();
 	}
 
-	public BigDecimal calcSalesTax() {
-		return taxes.get(BASIC_SALES_TAX_KEY).calculateTaxValue(this);
-	}
-	
-	public BigDecimal calcImportDuties() {
-		return taxes.get(IMPORT_DUTIES_TAX_KEY).calculateTaxValue(this);
+
+	/**
+	 * Calculate a single tax value for the tax identified by the given key
+	 * @param taxKey the key for searching the desired tax in the map
+	 * @return BigDecimal the tax value
+	 */
+	public BigDecimal calcTax(String taxKey) {
+		if (taxes.containsKey(taxKey)) {
+			return taxes.get(taxKey).calculateTaxValue(this);
+		} else {
+			return BigDecimal.ZERO;
+		}
 	}
 
-	
+	/**
+	 * Calculate the total value of all taxes applied to the product
+	 * @return a BigDecimal representing the total tax value
+	 */
+	public BigDecimal calcTotalTaxes() {
+		BigDecimal total = BigDecimal.ZERO;
+		for (SalesTax t: taxes.values()) {
+			total = total.add(t.calculateTaxValue(this));
+		}
+		return total;
+	}
 
 	// abstract superclass implementations
+	/**
+	 * Calculate the shelf price of the product as the sum of its net price
+	 * and all appliable taxes
+	 * @return a BigDecimal representing the shelf price
+	 */
 	public BigDecimal calcShelfPrice() {
-		return getNetPrice().add(calcSalesTax()).add(calcImportDuties());
+		return getNetPrice().add(calcTotalTaxes());
 	}
 	
 
@@ -108,8 +129,8 @@ public class TaxableProduct extends GenericProduct {
 		sb.append(isImported() ? "imported " : "");
 		sb.append(getDescription() + "\n");
 		sb.append("Price before taxes and duties: " + CurrencyUtilities.formatCurrency(getNetPrice()) + "\n");
-		sb.append("Sales taxes: " + CurrencyUtilities.formatCurrency(calcSalesTax()) + "\n");
-		sb.append(isImported() ? ("Import duties: " + CurrencyUtilities.formatCurrency(calcImportDuties()) + "\n") : "");
+		sb.append("Sales taxes: " + CurrencyUtilities.formatCurrency(taxes.get(BASIC_SALES_TAX_KEY).calculateTaxValue(this)) + "\n");
+		sb.append(isImported() ? ("Import duties: " + CurrencyUtilities.formatCurrency(taxes.get(IMPORT_DUTIES_TAX_KEY).calculateTaxValue(this)) + "\n") : "");
 		sb.append("Final price: " + CurrencyUtilities.formatCurrency(calcShelfPrice()) + "\n");
 		return sb.toString();
 	}
