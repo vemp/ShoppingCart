@@ -1,6 +1,7 @@
 package products;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public class TaxableProduct extends GenericProduct {
 		if (taxes.containsKey(taxKey)) {
 			return taxes.get(taxKey).calculateTaxValue(this);
 		} else {
-			return BigDecimal.ZERO;
+			return CurrencyUtilities.roundTwoDecimals(BigDecimal.ZERO);
 		}
 	}
 
@@ -69,7 +70,7 @@ public class TaxableProduct extends GenericProduct {
 		for (SalesTax t: taxes.values()) {
 			total = total.add(t.calculateTaxValue(this));
 		}
-		return total;
+		return CurrencyUtilities.roundTwoDecimals(total);
 	}
 
 	// abstract superclass implementations
@@ -79,7 +80,7 @@ public class TaxableProduct extends GenericProduct {
 	 * @return a BigDecimal representing the shelf price
 	 */
 	public BigDecimal calcShelfPrice() {
-		return CurrencyUtilities.roundUpToFiveCents(getNetPrice().add(calcTotalTaxes()));
+		return CurrencyUtilities.roundTwoDecimals(getNetPrice().add(calcTotalTaxes()));
 	}
 	
 

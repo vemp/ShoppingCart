@@ -1,6 +1,7 @@
 package taxes;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import products.TaxableProduct;
 import utils.CurrencyUtilities;
@@ -44,7 +45,7 @@ public class SalesTax {
 	 */
 	public BigDecimal calculateTaxValue(TaxableProduct p) {
 		if (exemption) {
-			return BigDecimal.ZERO;
+			return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 		}
 		BigDecimal tax =  p.getNetPrice().multiply(rate.divide(new BigDecimal(100)));
 		return CurrencyUtilities.roundUpToFiveCents(tax);

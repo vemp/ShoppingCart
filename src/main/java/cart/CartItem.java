@@ -55,7 +55,7 @@ public class CartItem {
 		return quantity;
 	}
 	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+		this.quantity = (quantity < 0) ? 0 : quantity;
 	}
 	public TaxableProduct getProduct() {
 		return product;

@@ -29,7 +29,7 @@ public class TestProdotti {
 		carrello1.add(p3);
 		
 		for(TaxableProduct p: carrello1) {
-			System.out.println(p.toString());
+			System.out.println(p);
 		}
 		
 		ArrayList<TaxableProduct> carrello2 = new ArrayList<TaxableProduct>();		
@@ -48,7 +48,7 @@ public class TestProdotti {
 		carrello2.add(p5);
 		
 		for(TaxableProduct p: carrello2) {
-			System.out.println(p.toString());
+			System.out.println(p);
 		}
 		
 		ArrayList<TaxableProduct> carrello3 = new ArrayList<TaxableProduct>();		
@@ -78,7 +78,7 @@ public class TestProdotti {
 		carrello3.add(p9);
 		
 		for(TaxableProduct p: carrello3) {
-			System.out.println(p.toString());
+			System.out.println(p);
 		}
 		
 		

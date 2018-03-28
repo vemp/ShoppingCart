@@ -26,6 +26,18 @@ public class CurrencyUtilitiesTest {
 		expected = new BigDecimal(5.05).setScale(2, RoundingMode.HALF_UP);
 		assertEquals("5.05 should round up to 5.05", expected, CurrencyUtilities.roundUpToFiveCents(new BigDecimal(5.05)));
 	}
+	
+	@Test
+	public void testRoundTwoDecimals() {
+		BigDecimal expected = new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP);
+		assertEquals("0 should round up to 0.00", expected, CurrencyUtilities.roundTwoDecimals(BigDecimal.ZERO));
+		expected = new BigDecimal(1.00).setScale(2, RoundingMode.HALF_UP);
+		assertEquals("1 should round up to 1.00", expected, CurrencyUtilities.roundTwoDecimals(new BigDecimal(1)));
+		expected = new BigDecimal(10.00).setScale(2, RoundingMode.HALF_UP);
+		assertEquals("10.0000001 should round up to 10.00", expected, CurrencyUtilities.roundTwoDecimals(new BigDecimal(10.0000001)));
+		expected = new BigDecimal(20.01).setScale(2, RoundingMode.HALF_UP);
+		assertEquals("20.006 should round up to 20.01", expected, CurrencyUtilities.roundTwoDecimals(new BigDecimal(20.006)));
+	}
 
 	@Test
 	public void testFormatCurrency() {
