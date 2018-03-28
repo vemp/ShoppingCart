@@ -21,12 +21,12 @@ import utils.CurrencyUtilities;
 public class TaxableProduct extends GenericProduct {
 	
 	// constants
-	private static final String BASIC_SALES_TAX_KEY = "SALES";
-	private static final String IMPORT_DUTIES_TAX_KEY = "IMPORT";
-	private static final BigDecimal DEFAULT_SALES_TAX_RATE = new BigDecimal(10);
-	private static final BigDecimal DEFAULT_IMPORT_DUTY_RATE = new BigDecimal(5);
-	private static final String BASIC_SALES_TAX_DESCRIPTION = "Basic sales tax";
-	private static final String IMPORT_DUTY_TAX_DESCRIPTION = "Import duties tax";
+	public static final String BASIC_SALES_TAX_KEY = "SALES";
+	public static final String IMPORT_DUTIES_TAX_KEY = "IMPORT";
+	public static final BigDecimal DEFAULT_SALES_TAX_RATE = new BigDecimal(10);
+	public static final BigDecimal DEFAULT_IMPORT_DUTY_RATE = new BigDecimal(5);
+	public static final String BASIC_SALES_TAX_DESCRIPTION = "Basic sales tax";
+	public static final String IMPORT_DUTY_TAX_DESCRIPTION = "Import duties tax";
 	
 	
 	// private members
@@ -79,7 +79,7 @@ public class TaxableProduct extends GenericProduct {
 	 * @return a BigDecimal representing the shelf price
 	 */
 	public BigDecimal calcShelfPrice() {
-		return getNetPrice().add(calcTotalTaxes());
+		return CurrencyUtilities.roundUpToFiveCents(getNetPrice().add(calcTotalTaxes()));
 	}
 	
 

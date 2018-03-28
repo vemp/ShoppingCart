@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 
 import org.junit.Test;
 
-public class CurrencyUtilitiesTest extends CurrencyUtilities {
+public class CurrencyUtilitiesTest {
 
 	@Test
 	public void testRoundUpToFiveCents() {
