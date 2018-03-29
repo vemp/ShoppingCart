@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  */
 public abstract class GenericProduct {
 
-	private BigDecimal netPrice;
+	private BigDecimal netPrice = BigDecimal.ZERO;
 	private String description;
 	private boolean imported = false;
 

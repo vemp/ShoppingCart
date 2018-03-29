@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
+import cart.CartItem;
 import taxes.SalesTax;
 import utils.CurrencyUtilities;
 
@@ -13,6 +14,9 @@ import utils.CurrencyUtilities;
  * have two different tax types applied: a basic sales tax and an import
  * duty tax. A product can be exempt from basic sales tax, and is exempt
  * from import duties if it is not imported.
+ * <p>
+ * The class can be extended to create more specific types of items, each
+ * with additional properties. A {@link Book } class is provided as an example.
  * <p>
  * It also provides a toString method to print a product's description,
  * net price, basic sales tax and duty tax values.
@@ -100,7 +104,9 @@ public class TaxableProduct extends GenericProduct {
 
 	public void setBasicSalesTaxExempt(boolean basicSalesTaxExempt) {
 		this.basicSalesTaxExempt = basicSalesTaxExempt;
-		this.taxes.get(BASIC_SALES_TAX_KEY).setExemption(basicSalesTaxExempt);
+		if (!taxes.isEmpty()) {
+			this.taxes.get(BASIC_SALES_TAX_KEY).setExemption(basicSalesTaxExempt);
+		}
 	}
 	
 	public Map<String, SalesTax> getTaxes() {
@@ -119,7 +125,9 @@ public class TaxableProduct extends GenericProduct {
 	@Override
 	public void setImported(boolean imported) {
 		super.setImported(imported);
-		this.taxes.get(IMPORT_DUTIES_TAX_KEY).setExemption(!imported);
+		if (!taxes.isEmpty()) {
+			this.taxes.get(IMPORT_DUTIES_TAX_KEY).setExemption(!imported);
+		}
 	}
 
 	

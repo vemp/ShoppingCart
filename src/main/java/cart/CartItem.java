@@ -18,7 +18,9 @@ public class CartItem {
 	private int quantity = 1;
 	private TaxableProduct product;
 	
-	public CartItem() {};
+	public CartItem() {
+		this.product = new TaxableProduct();
+	};
 	
 	public CartItem(TaxableProduct product) {
 		this.product = product;

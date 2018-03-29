@@ -31,9 +31,9 @@ public class ShoppingCart {
 	public BigDecimal calcTotalTaxes() {
 		BigDecimal total = BigDecimal.ZERO;
 		for (CartItem c: items) {
-			total.add(c.calcTaxes());
+			total = total.add(c.calcTaxes());
 		}
-		return total;
+		return CurrencyUtilities.roundTwoDecimals(total);
 	}
 	
 	/**
@@ -41,11 +41,11 @@ public class ShoppingCart {
 	 * @return a BigDecimal representing the total shelf price value for the cart.
 	 */
 	public BigDecimal calcTotalShelfPrice() {
-		BigDecimal total = calcTotalTaxes();
+		BigDecimal total = BigDecimal.ZERO;
 		for (CartItem c: items) {
 			total = total.add(c.calcShelfPrice());
 		}
-		return total;
+		return CurrencyUtilities.roundTwoDecimals(total);
 	}
 	
 	
